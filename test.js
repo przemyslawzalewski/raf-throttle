@@ -1,5 +1,6 @@
 import raf from 'raf'
-import throttle from './rafThrottle.js'
+
+import throttle from './'
 
 raf.polyfill();
 
@@ -83,6 +84,22 @@ test('cancel the trailing throttled invocation', done => {
 
   raf(() => {
     expect(callbackSpy.mock.calls.length).toBe(0)
+    done()
+  })
+})
+
+test('should be able to restart after cancel', done => {
+  expect.assertions(1)
+
+  const callbackSpy = jest.fn()
+
+  const throttled = throttle(callbackSpy)
+  throttled()
+  throttled.cancel()
+  throttled()
+
+  raf(() => {
+    expect(callbackSpy.mock.calls.length).toBe(1)
     done()
   })
 })
